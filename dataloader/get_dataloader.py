@@ -9,7 +9,8 @@ def dataloader(args, g):
     val_eid = torch.arange(int(0.7 * origin_num_edges), int(0.85 * origin_num_edges))
     test_eid = torch.arange(int(0.85 * origin_num_edges), origin_num_edges)
 
-    # reverse_eids = torch.cat([torch.arange(origin_num_edges, 2 * origin_num_edges), torch.arange(0, origin_num_edges)])
+    # reverse_eids = torch.cat([torch.arange(origin_num_edges, 2 * origin_num_edges),
+    #                           torch.arange(0, origin_num_edges)])
     exclude, reverse_eids = None, None
 
     negative_sampler = dgl.dataloading.negative_sampler.Uniform(1) if 'LP' in args.tasks else None

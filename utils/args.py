@@ -1,15 +1,18 @@
 import argparse
 import sys
 
+
 def get_args():
-    ### Argument and global variables
+    # Argument and global variables
     parser = argparse.ArgumentParser('APAN')
-    parser.add_argument('-d', '--data', type=str, choices=["wikipedia", "reddit", "rednote"], help='Dataset name (eg. wikipedia or reddit)',
+    parser.add_argument('-d', '--data', type=str, choices=["wikipedia", "reddit", "rednote"],
+                        help='Dataset name (eg. wikipedia or reddit)',
                         default='wikipedia')
-    parser.add_argument('--tasks', type=str, default="LP", choices=["LP", "EC", "NC"], help='task name link prediction, edge or node classification')
+    parser.add_argument('--tasks', type=str, default="LP", choices=["LP", "EC", "NC"],
+                        help='task name link prediction, edge or node classification')
     parser.add_argument('--bs', type=int, default=200, help='Batch_size')
     parser.add_argument('--prefix', type=str, default='APAN', help='Prefix to name the checkpoints')
-    parser.add_argument('--n_mail', type=int, default=10, help='Number of neighbors to sample')
+    parser.add_argument('--n_mail', type=int, default=10, help='Capacity of mailbox')
     parser.add_argument('--n_degree', type=int, default=20, help='Number of neighbors to sample')
     parser.add_argument('--n_head', type=int, default=2, help='Number of heads used in attention layer')
     parser.add_argument('--n_epoch', type=int, default=50, help='Number of epochs')
@@ -28,27 +31,27 @@ def get_args():
     parser.add_argument('--balance', action='store_true',
                         help='use fraud user sampling when doing EC or NC tasks')
     parser.add_argument('--pretrain', action='store_true',
-                        help='use linkpred task model as pretrain model to learn EC or NC')                        
+                        help='use linkpred task model as pretrain model to learn EC or NC')
     parser.add_argument('--no_time', action='store_true',
                         help='do not use time embedding')
     parser.add_argument('--no_pos', action='store_true',
-                        help='do not use position embedding')                
+                        help='do not use position embedding')
 
     try:
         args = parser.parse_args()
-        assert args.n_worker == 0, "n_worker must be 0, etherwise dataloader will cause bug and results very bad performance (this bug will be fixed soon)"
+        assert args.n_worker == 0, "n_worker must be 0, etherwise dataloader will cause bug " \
+                                   "and results very bad performance (this bug will be fixed soon)"
         if args.data != 'rednote':
             args.feat_dim = 101
         else:
             args.feat_dim = 38
-            args.lr *= 5 
-            args.bs *= 5 
+            args.lr *= 5
+            args.bs *= 5
         args.no_time = True
-        #args.no_pos = True
+        # args.no_pos = True
 
     except:
         parser.print_help()
         sys.exit(0)
-    
-    return args
 
+    return args

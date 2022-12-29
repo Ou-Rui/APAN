@@ -6,14 +6,16 @@ import dgl.function as fn
 
 class Encoder(nn.Module):
     def __init__(self, args, emb_dim, n_head=2, dropout=0.1, use_mask=False):
+        # use_mask === False
         super(Encoder, self).__init__()
         self.args = args
 
         self.attn_aggr = mail_attn_agger(emb_dim, n_head, dropout)
         self.time_encoder = TimeEncode(emb_dim)
+        # len_mail: the number of mail in the mailbox (capacity of mailbox)
         len_mail = args.n_mail
         self.pos_encoder = PosEncode(emb_dim, len_mail)
-        self.merger = MergeLayer((emb_dim) * 2, emb_dim, dropout=dropout)
+        self.merger = MergeLayer(emb_dim * 2, emb_dim, dropout=dropout)
         self.use_mask = use_mask
 
     def forward(self, pos_graph, neg_graph, num_pos_nodes):
@@ -24,12 +26,13 @@ class Encoder(nn.Module):
         if self.use_mask:
             mask = (mail.mean(2) == 0).bool()
             mask[:, 0] = 0
-
+        # z(t-): embedding at t-1
         feat = pos_graph.ndata['feat']
 
         joined_mail = mail[:, :, :-2]
 
         if not self.args.no_time:
+            # Temporal Embedding seems no use...
             ts = pos_graph.ndata['ts']
             last_update = pos_graph.ndata['last_update']
             mail_time = mail[:, :, -2]
@@ -40,6 +43,8 @@ class Encoder(nn.Module):
             time_emb_feat = self.time_encoder(delta_t_feat)
             feat = feat + time_emb_feat.squeeze()
         if not self.args.no_pos:
+            # Positional Encoding
+            # input the timestamp of mails ???? what is "mail_time"?
             mail_time = mail[:, :, -2]
             pos_emb_msg = self.pos_encoder(mail_time)
             joined_mail = joined_mail + pos_emb_msg
@@ -62,8 +67,8 @@ class mail_attn_agger(nn.Module):
                                                     num_heads=n_head,
                                                     dropout=dropout)
 
-    # 距离编码、时间编码
     def forward(self, feat, mail, mask):
+        # mask === None
         mail = mail.permute([1, 0, 2])
         attn_output, attn_weight = self.multihead_attn(feat.unsqueeze(0), mail, mail, mask)
         attn_output, attn_weight = attn_output.squeeze(), attn_weight.squeeze()
@@ -96,21 +101,25 @@ class TimeEncode(torch.nn.Module):
 class PosEncode(nn.Module):
     def __init__(self, expand_dim, seq_len):
         super().__init__()
-
+        # expand_dim: dim num of node/edge embedding
+        # seq_len: capacity of mailbox
         self.pos_embeddings = nn.Embedding(num_embeddings=seq_len, embedding_dim=expand_dim)
 
     def forward(self, ts):
         # ts: [N, L]
+        # order: indexes of the sorted ts
         order = ts.argsort()
         ts_emb = self.pos_embeddings(order)
         return ts_emb
 
 
 class MergeLayer(torch.nn.Module):
+    """ LayerNormalization + MLP """
     def __init__(self, in_dim, out_dim, dropout=0.1):
         super().__init__()
-
+        # LayerNormalization
         self.norm = nn.LayerNorm(in_dim)
+        # MLP
         hidden_dim = (in_dim + out_dim) // 2
         self.fc1 = nn.Linear(in_dim, hidden_dim)
         self.fc2 = nn.Linear(hidden_dim, out_dim)

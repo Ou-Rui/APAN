@@ -23,13 +23,15 @@ def train(args, logger):
     print('Model trainging with ' + device_string)
     device = torch.device(device_string)
 
+    # load dataset
     g = load_graphs(f"./data/{args.data}.bin")[0][0]
     print(g)
     efeat_dim = g.edata['feat'].shape[1]
     nfeat_dim = efeat_dim
-
+    # split dataset, train : val : test = 7 : 1.5 : 1.5
     train_loader, val_loader, test_loader, num_val_samples, num_test_samples = dataloader(args, g)
 
+    # create model
     encoder = Encoder(args, nfeat_dim, n_head=args.n_head, dropout=args.dropout).to(device)
     decoder = Decoder(args, nfeat_dim).to(device)
     msg2mail = Msg2Mail(args, nfeat_dim)

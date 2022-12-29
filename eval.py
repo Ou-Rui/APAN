@@ -1,4 +1,4 @@
-from pytorch_lightning.metrics.functional import accuracy, auroc, average_precision, roc, f1
+from torchmetrics.functional import accuracy, auroc, average_precision, roc, f1_score
 import torch
 from model import Msg2Mail
 import numpy as np
