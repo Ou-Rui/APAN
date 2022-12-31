@@ -82,7 +82,7 @@ def train(args, logger):
                 if 'LP' not in args.tasks and args.balance:
                     neg_graph = fraud_sampler.sample_fraud_event(g, args.bs // 5, current_ts.max().cpu()).to(device)
                 logits, labels = decoder(emb, pos_graph, neg_graph)
-
+                # logits & labels already contain the positive & negative ones
                 loss = loss_fcn(logits, labels)
 
                 optimizer.zero_grad()
@@ -95,6 +95,7 @@ def train(args, logger):
                 mail = msg2mail.gen_mail(args, emb, input_nodes, pos_graph, frontier, 'train')
 
                 if not args.no_time:
+                    # no use
                     g.ndata['last_update'][pos_graph.ndata[dgl.NID][:num_pos_nodes]] = pos_ts.to('cpu')
                 g.ndata['feat'][pos_graph.ndata[dgl.NID]] = emb.to('cpu')
                 g.ndata['mail'][input_nodes] = mail

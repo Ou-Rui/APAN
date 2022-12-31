@@ -24,9 +24,11 @@ class Decoder(nn.Module):
             neg_emb = neg_graph.edata['emb']
         with pos_graph.local_scope():
             pos_graph.ndata['feat'] = block_outputs
+            # concat src['feat'] & dst['feat']
             pos_graph.apply_edges(linkpred_concat)
             pos_emb = pos_graph.edata['emb']
         logits = self.linkpredlayer(torch.cat([pos_emb, neg_emb]))
+        # zeros_like: output the zero matrix, which shape = arg_matrix
         labels = torch.zeros_like(logits)
         labels[:pos_emb.shape[0]] = 1
         return logits, labels

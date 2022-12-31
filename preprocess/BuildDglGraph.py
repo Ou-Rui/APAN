@@ -47,6 +47,6 @@ if args.new_node_count:
     print(
         f'total nodes: {g.num_nodes()}, training nodes: {train_g.num_nodes()}, val_n_test nodes: {val_n_test_g.num_nodes()}')
     old_nodes = val_n_test_g.num_nodes() - g.num_nodes() + train_g.num_nodes()
-    print(f'old nodes in val_n_test: {old_nodes} ({round((old_nodes) * 100 / val_n_test_g.num_nodes(), 4)}%)')
+    print(f'old nodes in val_n_test: {old_nodes} ({round(old_nodes * 100 / val_n_test_g.num_nodes(), 4)}%)')
     new_nodes = g.num_nodes() - train_g.num_nodes()
-    print(f'new nodes in val_n_test: {new_nodes} ({round((new_nodes) * 100 / val_n_test_g.num_nodes(), 4)}%)')
+    print(f'new nodes in val_n_test: {new_nodes} ({round(new_nodes * 100 / val_n_test_g.num_nodes(), 4)}%)')

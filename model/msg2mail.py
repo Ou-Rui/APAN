@@ -4,7 +4,7 @@ import dgl
 import dgl.function as fn
 
 
-class Msg2Mail():
+class Msg2Mail:
     def __init__(self, args, nfeat_dim):
         super(Msg2Mail, self).__init__()
         self.args = args
@@ -26,7 +26,7 @@ class Msg2Mail():
         return mail
 
 
-class MSG():
+class MSG:
     def __init__(self):
         super(MSG, self).__init__()
 
