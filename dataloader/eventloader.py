@@ -15,7 +15,7 @@ class TemporalEdgeCollator(dgl.dataloading.EdgeCollator):
 
     def collate(self, items):
         # print('before', self.block_sampler.ts)
-
+        # items = eids
         current_ts = self.g.edata['timestamp'][items[-1]]  # only sample edges before last timestamp in a batch
         self.block_sampler.ts = current_ts
         neg_pair_graph = None
@@ -23,7 +23,7 @@ class TemporalEdgeCollator(dgl.dataloading.EdgeCollator):
             input_nodes, pair_graph, blocks = self._collate(items)
         else:
             input_nodes, pair_graph, neg_pair_graph, blocks = self._collate_with_negative_sampling(items)
-
+        # pair_graph: subgraph, node_id = original graph
         for i in range(self.args.n_layer - 1):
             self.block_sampler.frontiers[0].add_edges(*self.block_sampler.frontiers[i + 1].edges())
         frontier = dgl.reverse(self.block_sampler.frontiers[0])
@@ -45,6 +45,7 @@ class MultiLayerTemporalNeighborSampler(dgl.dataloading.BlockSampler):
         fanout = self.fanouts[block_id]
 
         g = dgl.in_subgraph(g, seed_nodes)
+        # remove edges whose timestamp > ts of current batch
         g.remove_edges(torch.where(g.edata['timestamp'] > self.ts)[0])
 
         if fanout is None:

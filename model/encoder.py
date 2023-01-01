@@ -19,7 +19,7 @@ class Encoder(nn.Module):
         self.use_mask = use_mask
 
     def forward(self, pos_graph, neg_graph, num_pos_nodes):
-
+        # mail: mailbox, contains 10 mails
         mail = pos_graph.ndata['mail']
 
         mask = None
@@ -28,7 +28,7 @@ class Encoder(nn.Module):
             mask[:, 0] = 0
         # z(t-): embedding at t-1
         feat = pos_graph.ndata['feat']
-
+        # exclude last 2 dims, which are timestamp & loc_info, see gen_mail() in msg2mail.py
         joined_mail = mail[:, :, :-2]
 
         if not self.args.no_time:
@@ -44,7 +44,7 @@ class Encoder(nn.Module):
             feat = feat + time_emb_feat.squeeze()
         if not self.args.no_pos:
             # Positional Encoding
-            # input the timestamp of mails ???? what is "mail_time"?
+            # timestamp of the mail
             mail_time = mail[:, :, -2]
             pos_emb_msg = self.pos_encoder(mail_time)
             joined_mail = joined_mail + pos_emb_msg

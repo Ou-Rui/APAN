@@ -56,7 +56,7 @@ def eval_epoch(args, logger, g, dataloader, encoder, decoder, msg2mail, loss_fcn
             labels = labels.long()
             logits = logits.sigmoid()
             if 'LP' in args.tasks:
-                pred = logits > 0.5
+                pred = logits > 0.5         # threshold = 0.5
                 m_ap.append(average_precision(logits, labels).cpu().numpy())
                 m_auc.append(auroc(logits, labels).cpu().numpy())
                 m_acc.append(accuracy(pred, labels).cpu().numpy())

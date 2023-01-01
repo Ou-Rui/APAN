@@ -37,7 +37,7 @@ def preprocess(args):
                 u, i = int(e[0]), int(e[1])
 
                 u, i = Reidx.user2id(args, u, i)
-
+                # dataset are sorted by timestamp
                 ts = float(e[2][:-3]) - ts_shift if args.data == 'alipay' else float(e[2])
                 if idx == 0:
                     ts_shift = ts

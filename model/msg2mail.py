@@ -31,12 +31,15 @@ class MSG:
         super(MSG, self).__init__()
 
     def get_edge_msg(edges):
+        # msg.shape = [400, 172], 172 is the dim of feature
         msg = edges.src['feat'] + edges.dst['feat'] + edges.data['feat']
+        # loc_info.shape = [400, 1], all element = 1.0
         loc_info = torch.tensor(1).repeat(edges.batch_size()).unsqueeze(1).float()
         if msg.is_cuda:
             device = msg.device
             loc_info = loc_info.to(device)
         msg = torch.cat((msg, edges.data['timestamp'].unsqueeze(1), loc_info), 1)
+        # msg.shape = [400, 174], stack with timestamp & loc_info
         return {'m': msg}
 
     def pass_msg(edges):
