@@ -5,7 +5,6 @@ import logging
 import time
 
 
-
 def set_logger():
     task_time = time.strftime("%Y-%m-%d %H:%M", time.localtime())
     logging.basicConfig(level=logging.INFO)
@@ -21,5 +20,5 @@ def set_logger():
     ch.setFormatter(formatter)
     logger.addHandler(fh)
     logger.addHandler(ch)
-    
+
     return logger

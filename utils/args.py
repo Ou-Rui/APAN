@@ -39,7 +39,7 @@ def get_args():
 
     try:
         args = parser.parse_args()
-        assert args.n_worker == 0, "n_worker must be 0, etherwise dataloader will cause bug " \
+        assert args.n_worker == 0, "n_worker must be 0, otherwise dataloader will cause bug " \
                                    "and results very bad performance (this bug will be fixed soon)"
         if args.data != 'rednote':
             args.feat_dim = 101

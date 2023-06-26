@@ -20,7 +20,7 @@ def train(args, logger):
     get_model_name = lambda part: f'{part}-{args.data}-{args.tasks}-{args.prefix}.pth'
     get_pretrain_model_name = lambda part: f'{part}-{args.data}-LP-{args.prefix}.pth'
     device_string = 'cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu >= 0 else 'cpu'
-    print('Model trainging with ' + device_string)
+    print('Model training with ' + device_string)
     device = torch.device(device_string)
 
     # load dataset

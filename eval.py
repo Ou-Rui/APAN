@@ -11,8 +11,8 @@ from utils import get_current_ts, get_args
 def eval_epoch(args, logger, g, dataloader, encoder, decoder, msg2mail, loss_fcn, device, num_samples):
     m_ap, m_auc, m_acc = [[], [], []] if 'LP' in args.tasks else [0, 0, 0]
 
-    labels_all = torch.zeros((num_samples)).long()
-    logits_all = torch.zeros((num_samples))
+    labels_all = torch.zeros(num_samples).long()
+    logits_all = torch.zeros(num_samples)
 
     attn_weight_all = torch.zeros((num_samples, args.n_mail))
 

@@ -35,13 +35,17 @@ class MultiLayerTemporalNeighborSampler(dgl.dataloading.BlockSampler):
     def __init__(self, args, fanouts, replace=False, return_eids=False):
         super().__init__(len(fanouts), return_eids)
 
-        self.fanouts = fanouts
-        self.replace = replace
+        self.fanouts = fanouts      # List[n_layers]，表示每一层的采样数量
+        self.replace = replace      # False
         self.ts = 0
         self.args = args
-        self.frontiers = [None for _ in range(len(fanouts))]
+        self.frontiers = [None for _ in range(len(fanouts))]    # 每一层的in-neighbor
 
     def sample_frontier(self, block_id, g, seed_nodes):
+        """
+        会被父类BlockSampler中的sample_blocks()调用
+        重写该函数来实现自定义采样
+        """
         fanout = self.fanouts[block_id]
 
         g = dgl.in_subgraph(g, seed_nodes)
